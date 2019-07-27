@@ -1,0 +1,6 @@
+framework module Pods_Roomy_appUITests {
+  umbrella header "Pods-Roomy_appUITests-umbrella.h"
+
+  export *
+  module * { export * }
+}
