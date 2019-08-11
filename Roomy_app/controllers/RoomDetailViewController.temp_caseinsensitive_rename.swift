@@ -8,7 +8,7 @@
 
 import UIKit
 
-class roomDetailViewController: UIViewController {
+class RoomDetailViewController: UIViewController {
 
     @IBOutlet weak var roomImage: UIImageView!
     @IBOutlet weak var roomDetails: UITextView!
@@ -19,7 +19,7 @@ class roomDetailViewController: UIViewController {
         super.viewDidLoad()
         
         roomImage.kf.setImage(
-            with: URL(string: roomDetailViewController.room.image ?? "https://images.app.goo.gl/HkiGXXzn47c69SzY6"),
+            with: URL(string: RoomDetailViewController.room.image ?? "https://images.app.goo.gl/HkiGXXzn47c69SzY6"),
             placeholder: UIImage(named: "Logo"),
             options: [
                 .scaleFactor(UIScreen.main.scale),
@@ -27,7 +27,7 @@ class roomDetailViewController: UIViewController {
                 .cacheOriginalImage
             ])
         
-        roomDetails.text = roomDetailViewController.room.descriptionText
+        roomDetails.text = RoomDetailViewController.room.descriptionText
     }
 
     @IBAction func backPressed(_ sender: Any) {

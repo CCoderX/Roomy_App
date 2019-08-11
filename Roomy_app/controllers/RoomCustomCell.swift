@@ -8,8 +8,7 @@
 
 import UIKit
 
-class roomCustomCell: UITableViewCell {
-
+class RoomCustomCell: UITableViewCell {
     
     @IBOutlet weak var bathsLabel: UILabel!
     @IBOutlet weak var bedsLabel: UILabel!
@@ -21,24 +20,23 @@ class roomCustomCell: UITableViewCell {
     @IBOutlet weak var firstImage: UIImageView!
     override func awakeFromNib() {
         super.awakeFromNib()
-        // Initialization code
     }
-
+    
     override func setSelected(_ selected: Bool, animated: Bool) {
         super.setSelected(selected, animated: animated)
         
-        // Configure the view for the selected state
     }
-    func addRoomDataToCell(room : roomClass){
-        self.addressLabel.text = room.place
-        self.hotelLabel.text = room.place
-        self.costLabel.text = String(room.price ?? 0)+"$"
-//        self.firstImage.image = room.getImages()[0]
-//        self.secondImage.image = room.getImages()[1]
-//        self.thirdImage.image = room.getImages()[2]
- //       self.bedsLabel.text = String(room.getNumberOfBeds()) + " beds"
-   //     self.bathsLabel.text = String(room.getNumberOfBaths())+" $"
-        
+    func putValues(initializerRoom: RoomModel) {
+        costLabel.text = initializerRoom.price
+        addressLabel.text = initializerRoom.place
+        firstImage.kf.setImage(
+            with: URL(string: initializerRoom.image ?? "https://images.app.goo.gl/HkiGXXzn47c69SzY6"),
+            placeholder: UIImage(named: "Logo"),
+            options: [
+                .scaleFactor(UIScreen.main.scale),
+                .transition(.fade(1)),
+                .cacheOriginalImage
+            ])
+        hotelLabel.text = initializerRoom.descriptionText
     }
-
 }

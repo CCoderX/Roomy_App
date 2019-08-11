@@ -9,7 +9,7 @@ import Realm
 import RealmSwift
 import Foundation
 
-class roomModel: Object {
+class RoomModel: Object {
     
     @objc dynamic var image: String?, price: String?, title: String?,
     place : String? ,   descriptionText : String?

@@ -8,7 +8,7 @@
 
 import UIKit
 import Alamofire
-class signUpViewController: UIViewController {
+class SignUpViewController: UIViewController {
 
     @IBOutlet weak var signUpButton: UIButton!
     @IBOutlet weak var passwordConfirmTextField: UITextField!
@@ -29,7 +29,7 @@ class signUpViewController: UIViewController {
     
     @IBAction func signUpPressed(_ sender: Any) {
         if let email =  emailTextField.text , let password = passwordTextField.text ,let passwordConfirm = passwordConfirmTextField.text {
-            if !email.isEmpty && !password.isEmpty && passwordConfirm.isEmpty{
+            if !email.isEmpty && !password.isEmpty && !passwordConfirm.isEmpty{
                 if passwordConfirm == password{
                     let requestParameters = ["email":email,
                                              "password" : password ]

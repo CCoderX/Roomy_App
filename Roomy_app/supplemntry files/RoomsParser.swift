@@ -11,23 +11,23 @@ import Alamofire
 import ObjectMapper
 import Realm
 import RealmSwift
-class roomsParser{
-    static func getRooms() {
+class RoomsParser{
+    static func fetchRooms(handler : @escaping(_ result : [RoomModel] , _ success: Bool)->Void) {
         let realm = try! Realm()
-//        let oldRooms = realm.objects(roomModel.self)
-//        realm.delete(oldRooms)
-//        try! realm.write {
-//            realm.deleteAll()
-//        }
-        if let token = UserDefaults.standard.string(forKey: "token"){
+        try! realm.write {
+            //            realm.delete(oldRooms)
+            realm.deleteAll()
+        }
+        if let token = UserDefaults.standard.string(forKey: "token") {
             AF.request(APIRouter.getAllRooms(["Authorization" : token])).validate().responseJSON { (response) in
+                var result = [RoomModel]()
                 switch response.result{
                 case .success(let results):
                     let rawData = results as! [[String:Any]]
                     
                     
                     for room in rawData{
-                        let temp = roomModel()
+                        let temp = RoomModel()
                         temp.descriptionText = room["description"] as? String
                         temp.image = room["image"] as? String
                         temp.place = room["place"] as? String
@@ -36,22 +36,20 @@ class roomsParser{
                         try! realm.write {
                             realm.add(temp)
                         }
+                        result.append(temp)
                     }
+                    print(result.count)
+                    handler(result , true)
+                    
                 case .failure(_):
-                    print("")
+                    
+                    handler(result, false)
                 }
             }
         }
         
     }
+    static func addRoom(room: RoomModel) {
+        
+    }
 }
-//                    for room in rawData{
-//                        print(type(of: room))
-//                    }
-//                    var rooms = [roomClass]()
-//                    for object in rawData{
-//                        //let tempRoom = object as! [String:Any]
-//                        let parsedRoom = Mapper<roomClass>().map(JSON: object)
-//                        rooms.append(parsedRoom!)
-//                    }
-//                    print (rooms[0].descriptionText)

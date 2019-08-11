@@ -12,45 +12,46 @@ import RealmSwift
 import Realm
 import Kingfisher
 class RoomsViewController: UIViewController {
-
-    var rooms = [roomModel()]
+    
+    var rooms = [RoomModel]()
+    
+    @IBOutlet private weak var roomsTableView: UITableView!
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        let realm = try! Realm()
-        rooms = Array( realm.objects(roomModel.self))
-        print(rooms.count)
-        roomsParser.getRooms()
+        RoomsParser.fetchRooms(){result , success in
+            if success {
+                self.rooms = result
+                self.roomsTableView.reloadData()
+            }
+            else {
+                let alert = UIAlertController(title: "Error in downloading rooms", message: "Try again ", preferredStyle: .alert)
+                alert.addAction(UIAlertAction(title: "Ok", style: .cancel, handler: { (alert) in
+                    self.dismiss(animated: true, completion: nil)
+                }))
+                self.present(alert, animated: true, completion: nil)
+            }
         }
+    }
     
-
     @IBAction func signOutPressed(_ sender: Any) {
         UserDefaults.standard.set("" ,forKey: "token")
         dismiss(animated: true, completion: nil)
     }
 }
-extension RoomsViewController : UITableViewDataSource , UITableViewDelegate{
+extension RoomsViewController : UITableViewDataSource , UITableViewDelegate {
+    
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "roomCell") as! roomCustomCell
-        cell.addressLabel.text = rooms[indexPath.row].descriptionText
-        cell.costLabel.text = rooms[indexPath.row].price
-        cell.hotelLabel.text = rooms[indexPath.row].place
-        cell.addressLabel.text = rooms[indexPath.row].place
-        cell.firstImage.kf.setImage(
-            with: URL(string: rooms[indexPath.row].image ?? "https://images.app.goo.gl/HkiGXXzn47c69SzY6"),
-            placeholder: UIImage(named: "Logo"),
-            options: [
-                .scaleFactor(UIScreen.main.scale),
-                .transition(.fade(1)),
-                .cacheOriginalImage
-            ])
+        let cell = tableView.dequeueReusableCell(withIdentifier: "roomCell") as! RoomCustomCell
+        cell.putValues(initializerRoom: rooms[indexPath.row]) 
         return cell
     }
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        roomsTableView.isHidden = rooms.isEmpty
         return rooms.count
     }
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        roomDetailViewController.room = rooms[indexPath.row]
+        RoomDetailViewController.room = rooms[indexPath.row]
         performSegue(withIdentifier: "roomDetailsSegue", sender: nil)
         
     }
