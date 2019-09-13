@@ -27,7 +27,12 @@ class RoomDetailViewController: UIViewController {
                 .cacheOriginalImage
             ])
         
-        roomDetails.text = RoomDetailViewController.room.descriptionText
+        if let detail = RoomDetailViewController.room.descriptionText {
+            roomDetails.text = RoomDetailViewController.room.descriptionText
+        }
+        else {
+            roomDetails.text = "This is a great room "
+        }
     }
 
     @IBAction func backPressed(_ sender: Any) {

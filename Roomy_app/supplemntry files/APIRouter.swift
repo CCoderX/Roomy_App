@@ -68,7 +68,7 @@ enum APIRouter: URLRequestConvertible {
         
         let encoding: ParameterEncoding = {
             switch self {
-            case .getAllRooms(let params):
+            case .getAllRooms( _):
                 return URLEncoding.default
             default:
                 return JSONEncoding.default

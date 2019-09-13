@@ -8,44 +8,70 @@
 
 import UIKit
 import Alamofire
-class SignUpViewController: UIViewController {
+protocol SignUp: class{
+    func signUp(email : String? , password : String?,passwordConfirm: String?)
+}
+class SignUpImplementation : SignUp {
+    weak var view : SignUpView?
+    init (view : SignUpView) {
+        self.view = view
+    }
+    func signUp(email: String?, password: String? ,passwordConfirm: String?) {
+
+        if let mail =  email , let pass = password ,let passConfirm = passwordConfirm {
+            if !mail.isEmpty && !pass.isEmpty && !passConfirm.isEmpty{
+                if passwordConfirm == password{
+                    Authorizer.SignUp(email: mail, password: pass) { (result, message) in
+                        if result {
+                            self.view?.removeView()
+                            return
+                        }
+                        else {
+                            self.view?.showAlert(title: "Error", message: message)
+                        }
+                    }
+                    
+                }
+            }
+            view?.showAlert(title: "Incomplete Fields", message: "Complete All Fields")
+        }
+    }
+}
+protocol SignUpView :class{
+    func removeView()
+    func showAlert(title :String,message: String)
+}
+
+class SignUpViewController: UIViewController ,SignUpView {
 
     @IBOutlet weak var signUpButton: UIButton!
     @IBOutlet weak var passwordConfirmTextField: UITextField!
     @IBOutlet weak var backButton: UIButton!
     @IBOutlet weak var passwordTextField: UITextField!
     @IBOutlet weak var emailTextField: UITextField!
-    
+    var presenter: SignUp?
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+        presenter = SignUpImplementation(view: self)
         signUpButton.layer.cornerRadius = 15
         backButton.layer.cornerRadius = 10
     }
-    
-    @IBAction func returnPressed(_ sender: Any) {
+    func removeView() {
         dismiss(animated: true, completion: nil)
+    }
+    func showAlert(title: String, message: String) {
+        let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "Ok", style: .cancel, handler: nil))
+        present(alert,animated: true)
+    }
+    @IBAction func returnPressed(_ sender: Any) {
+        removeView()
     }
     
     @IBAction func signUpPressed(_ sender: Any) {
-        if let email =  emailTextField.text , let password = passwordTextField.text ,let passwordConfirm = passwordConfirmTextField.text {
-            if !email.isEmpty && !password.isEmpty && !passwordConfirm.isEmpty{
-                if passwordConfirm == password{
-                    let requestParameters = ["email":email,
-                                             "password" : password ]
-                    AF.request(APIRouter.signUp(requestParameters)).responseJSON { (response) in
-                        switch response.result{
-                        case .success(let Success):
-                            print(Success)
-                            self.dismiss(animated: true, completion: nil)
-                        case .failure(let Failure):
-                            print(Failure)
-                        }
-                    }
-                    
-                }
-            }
-        }
+        
+        presenter!.signUp(email: emailTextField.text, password: passwordTextField.text,passwordConfirm: passwordConfirmTextField.text)
+        
     }
 
 }

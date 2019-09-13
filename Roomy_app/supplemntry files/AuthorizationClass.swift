@@ -21,29 +21,40 @@ class Authorizer {
                 userDefaults.synchronize()
                 returnedValue = true
                 //self.performSegue(withIdentifier: "roomsSegue", sender: nil)
-            case .failure(let failure):
+            case .failure( _):
                 //self.showAlert(title: "Sign In problem", message: "Enter valid email and password")
                 returnedValue = false
             }
         }
         return returnedValue
     }
-    static func SignUp(email: String, password: String) {
-        
+    static func SignUp(email: String, password: String , returned : @escaping(_ result: Bool,_ message: String)-> Void){
+        let requestParameters = ["email":email,
+                                 "password" : password ]
+        AF.request(APIRouter.signUp(requestParameters)).responseJSON { (response) in
+            switch response.result{
+            case .success(let Success):
+                print(Success)
+                returned(true ,Success as! String)
+            case .failure(let Failure):
+                print(Failure)
+                returned(false,Failure as! String)
+
+            }
+        }
     }
     static func checkToken()-> Bool {
+        var returned = false
         if let token = UserDefaults.standard.string(forKey: "token") {
             AF.request(APIRouter.getAllRooms(["Authorization" : token])).validate().responseJSON { (response) in
                 switch response.result{
-                case .success(let results):
-                    return true
-                case .failure(let error):
-                    return false
+                case .success( _):
+                    returned = true
+                case .failure( _):
+                    returned = false
                 }
             }
         }
-        else {
-            return false
-        }
+        return returned
     }
 }
